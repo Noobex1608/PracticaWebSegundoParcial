@@ -115,7 +115,7 @@ const ArtistaList: React.FC<ArtistaListProps> = ({
           >
             <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
               <img 
-                src={artista.fotourl} 
+                src={artista.fotoUrl} 
                 alt={artista.nombre}
                 style={{ 
                   width: '120px', 

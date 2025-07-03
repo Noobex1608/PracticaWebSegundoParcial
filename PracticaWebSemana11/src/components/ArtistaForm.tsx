@@ -19,7 +19,7 @@ const ArtistaForm: React.FC<ArtistaFormProps> = ({
     bio: '',
     redessociales: {},
     generomusical: '',
-    fotourl: ''
+    fotoUrl: ''
   });
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const ArtistaForm: React.FC<ArtistaFormProps> = ({
         bio: artista.bio || '',
         redessociales: artista.redessociales || {},
         generomusical: artista.generomusical || '',
-        fotourl: artista.fotourl || ''
+        fotoUrl: artista.fotoUrl || ''
       });
     } else {
       setFormData({
@@ -37,7 +37,7 @@ const ArtistaForm: React.FC<ArtistaFormProps> = ({
         bio: '',
         redessociales: {},
         generomusical: '',
-        fotourl: ''
+        fotoUrl: ''
       });
     }
   }, [artista]);
@@ -247,8 +247,8 @@ const ArtistaForm: React.FC<ArtistaFormProps> = ({
           </label>
           <input
             type="url"
-            name="fotourl"
-            value={formData.fotourl}
+            name="fotoUrl"
+            value={formData.fotoUrl}
             onChange={handleChange}
             placeholder="https://ejemplo.com/foto.jpg"
             style={{

@@ -10,7 +10,7 @@ export interface Artista {
   bio: string;
   redessociales?: RedesSociales;
   generomusical: string;
-  fotourl: string;
+  fotoUrl: string;
   created_at?: string;
   updated_at?: string;
 }

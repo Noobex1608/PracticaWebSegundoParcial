@@ -60,6 +60,10 @@ src/
 Steven Magallanes, Wendy Moreira, Nibia Rodriguez
 Sistema desarrollado como parte de la práctica de desarrollo web con arquitectura por capas y integración con Supabase.
 
+Steven Magallanes usuario
+Wendy Moreira Artista
+Nibia Rodriguez membresia
+
 ---
 
 ¡Disfruta gestionando tu sistema musical! 🎵

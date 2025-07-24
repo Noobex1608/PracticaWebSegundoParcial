@@ -1,0 +1,123 @@
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Navegación principal */
+.main-nav {
+  background: white;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-brand h1 {
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  padding: 20px 0;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 0;
+}
+
+.nav-links li {
+  position: relative;
+}
+
+.nav-links a {
+  display: block;
+  padding: 20px 25px;
+  text-decoration: none;
+  color: #666;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.nav-links a:hover {
+  color: #667eea;
+  background-color: #f8f9fa;
+}
+
+.nav-links a.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+/* Contenido principal */
+.main-content {
+  min-height: calc(100vh - 80px);
+  padding: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-nav {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .nav-brand h1 {
+    font-size: 1.3rem;
+    padding: 10px 0;
+  }
+  
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+  }
+  
+  .nav-links a {
+    padding: 15px 20px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    border-left: 3px solid transparent;
+  }
+  
+  .nav-links a.active {
+    border-bottom-color: #eee;
+    border-left-color: #667eea;
+  }
+  
+  .main-content {
+    min-height: calc(100vh - 200px);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-nav {
+    padding: 10px;
+  }
+  
+  .nav-brand h1 {
+    font-size: 1.1rem;
+  }
+  
+  .nav-links a {
+    font-size: 13px;
+    padding: 12px 15px;
+  }
+}

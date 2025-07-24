@@ -1,0 +1,217 @@
+<div class="transaccion-container">
+  <!-- Header con estadísticas -->
+  <div class="header">
+    <h1>💰 Gestión de Transacciones</h1>
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().total }}</span>
+        <span class="stat-label">Total Transacciones</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ formatCurrency(stats().montoStats.totalGeneral) }}</span>
+        <span class="stat-label">Monto Total</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().estadoStats.pendientes }}</span>
+        <span class="stat-label">Pendientes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ formatCurrency(stats().montoStats.promedio) }}</span>
+        <span class="stat-label">Promedio</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles -->
+  <div class="controls">
+    <div class="search-filters">
+      <input 
+        type="text" 
+        placeholder="Buscar por usuario, ID o monto..." 
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+        class="search-input">
+      
+      <select (change)="onTipoFilter($event)" [value]="selectedTipo()" class="filter-select">
+        <option value="">Todos los tipos</option>
+        <option value="compra">Compras</option>
+        <option value="venta">Ventas</option>
+      </select>
+      
+      <select (change)="onEstadoFilter($event)" [value]="selectedEstado()" class="filter-select">
+        <option value="">Todos los estados</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="completada">Completada</option>
+        <option value="cancelada">Cancelada</option>
+      </select>
+      
+      <button class="btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+    </div>
+    
+    <button class="btn-primary" (click)="openCreateForm()">
+      ➕ Nueva Transacción
+    </button>
+  </div>
+
+  <!-- Tabla de transacciones -->
+  <div class="transacciones-table-container">
+    <table class="transacciones-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Tipo</th>
+          <th>Cantidad</th>
+          <th>Monto Total</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (transaccion of filteredTransacciones(); track transaccion.id) {
+          <tr class="transaccion-row">
+            <td class="id-cell">#{{ transaccion.id }}</td>
+            <td class="usuario-cell">{{ getUserName(transaccion.usuarioId) }}</td>
+            <td class="tipo-cell">
+              <span class="tipo-badge" [class]="getTipoClass(transaccion.tipo)">
+                {{ transaccion.tipo === 'compra' ? '📥 Compra' : '📤 Venta' }}
+              </span>
+            </td>
+            <td class="cantidad-cell">{{ transaccion.cantidad }}</td>
+            <td class="monto-cell">{{ formatCurrency(transaccion.montoTotal) }}</td>
+            <td class="fecha-cell">{{ formatDate(transaccion.fecha) }}</td>
+            <td class="estado-cell">
+              <select 
+                [value]="transaccion.estado" 
+                (change)="updateEstado(transaccion, ($event.target as HTMLSelectElement).value)"
+                class="estado-select"
+                [class]="getEstadoClass(transaccion.estado)">
+                <option value="pendiente">⏳ Pendiente</option>
+                <option value="completada">✅ Completada</option>
+                <option value="cancelada">❌ Cancelada</option>
+              </select>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-edit" (click)="openEditForm(transaccion)">
+                ✏️ Editar
+              </button>
+              <button class="btn-delete" (click)="deleteTransaccion(transaccion)">
+                🗑️ Eliminar
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="no-results-row">
+            <td colspan="8">
+              <div class="no-results">
+                <h3>No se encontraron transacciones</h3>
+                <p>Intenta cambiar los filtros de búsqueda o crea una nueva transacción</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal de formulario -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="closeForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingTransaccion() ? 'Editar Transacción' : 'Nueva Transacción' }}</h2>
+          <button class="close-btn" (click)="closeForm()">×</button>
+        </div>
+        
+        <form (ngSubmit)="onSubmit()" class="transaccion-form">
+          <div class="form-group">
+            <label for="usuarioId">Usuario:</label>
+            <select 
+              id="usuarioId"
+              [value]="formData().usuarioId"
+              (change)="updateFormField('usuarioId', +($event.target as HTMLSelectElement).value)"
+              required>
+              <option value="0">Seleccione un usuario</option>
+              @for (usuario of usuarios(); track usuario.id) {
+                <option [value]="usuario.id">{{ usuario.nombre }} ({{ usuario.email }})</option>
+              }
+            </select>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tipo">Tipo:</label>
+              <select 
+                id="tipo"
+                [value]="formData().tipo"
+                (change)="updateFormField('tipo', ($event.target as HTMLSelectElement).value)"
+                required>
+                <option value="compra">📥 Compra</option>
+                <option value="venta">📤 Venta</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="estado">Estado:</label>
+              <select 
+                id="estado"
+                [value]="formData().estado"
+                (change)="updateFormField('estado', ($event.target as HTMLSelectElement).value)"
+                required>
+                <option value="pendiente">⏳ Pendiente</option>
+                <option value="completada">✅ Completada</option>
+                <option value="cancelada">❌ Cancelada</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cantidad">Cantidad:</label>
+              <input 
+                type="number" 
+                id="cantidad"
+                [value]="formData().cantidad"
+                (input)="updateFormField('cantidad', +$event.target.value)"
+                min="1"
+                placeholder="Cantidad"
+                required>
+            </div>
+            
+            <div class="form-group">
+              <label for="montoTotal">Monto Total (€):</label>
+              <input 
+                type="number" 
+                id="montoTotal"
+                [value]="formData().montoTotal"
+                (input)="updateFormField('montoTotal', +$event.target.value)"
+                min="0.01"
+                step="0.01"
+                placeholder="0.00"
+                required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="fecha">Fecha:</label>
+            <input 
+              type="date" 
+              id="fecha"
+              [value]="formData().fecha.toISOString().split('T')[0]"
+              (input)="updateFormField('fecha', new Date(($event.target as HTMLInputElement).value))"
+              required>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="closeForm()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">
+              {{ editingTransaccion() ? 'Actualizar' : 'Crear' }} Transacción
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }

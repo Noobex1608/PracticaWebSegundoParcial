@@ -1,0 +1,131 @@
+<div class="artista-container">
+  <!-- Header con estadísticas -->
+  <div class="header">
+    <h1>🎭 Gestión de Artistas</h1>
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().total }}</span>
+        <span class="stat-label">Total Artistas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().edadPromedio }}</span>
+        <span class="stat-label">Edad Promedio</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().generosUnicos.length }}</span>
+        <span class="stat-label">Géneros</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles -->
+  <div class="controls">
+    <div class="search-filters">
+      <input 
+        type="text" 
+        placeholder="Buscar artistas..." 
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+        class="search-input">
+      
+      <select (change)="onGeneroFilter($event)" [value]="selectedGenero()" class="filter-select">
+        <option value="">Todos los géneros</option>
+        @for (genero of generos(); track genero) {
+          <option [value]="genero">{{ genero }}</option>
+        }
+      </select>
+      
+      <button class="btn-clear" (click)="clearFilters()">Limpiar Filtros</button>
+    </div>
+    
+    <button class="btn-primary" (click)="openCreateForm()">
+      ➕ Nuevo Artista
+    </button>
+  </div>
+
+  <!-- Lista de artistas -->
+  <div class="artistas-grid">
+    @for (artista of filteredArtistas(); track artista.id) {
+      <div class="artista-card">
+        <div class="artista-info">
+          <h3>{{ artista.nombre }}</h3>
+          <div class="artista-details">
+            <span class="genre-tag">{{ artista.genero }}</span>
+            <span class="age">{{ artista.edad }} años</span>
+          </div>
+        </div>
+        
+        <div class="artista-actions">
+          <button class="btn-edit" (click)="openEditForm(artista)">
+            ✏️ Editar
+          </button>
+          <button class="btn-delete" (click)="deleteArtista(artista)">
+            🗑️ Eliminar
+          </button>
+        </div>
+      </div>
+    } @empty {
+      <div class="no-results">
+        <h3>No se encontraron artistas</h3>
+        <p>Intenta cambiar los filtros de búsqueda o crea un nuevo artista</p>
+      </div>
+    }
+  </div>
+
+  <!-- Modal de formulario -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="closeForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingArtista() ? 'Editar Artista' : 'Nuevo Artista' }}</h2>
+          <button class="close-btn" (click)="closeForm()">×</button>
+        </div>
+        
+        <form (ngSubmit)="onSubmit()" class="artista-form">
+          <div class="form-group">
+            <label for="nombre">Nombre del Artista:</label>
+            <input 
+              type="text" 
+              id="nombre"
+              [value]="formData().nombre"
+              (input)="updateFormField('nombre', $event.target.value)"
+              placeholder="Ingrese el nombre del artista"
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="genero">Género/Especialidad:</label>
+            <input 
+              type="text" 
+              id="genero"
+              [value]="formData().genero"
+              (input)="updateFormField('genero', $event.target.value)"
+              placeholder="Ej: Drama/Acción, Comedia, etc."
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="edad">Edad:</label>
+            <input 
+              type="number" 
+              id="edad"
+              [value]="formData().edad"
+              (input)="updateFormField('edad', +$event.target.value)"
+              min="1"
+              max="120"
+              placeholder="Edad del artista"
+              required>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="closeForm()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">
+              {{ editingArtista() ? 'Actualizar' : 'Crear' }} Artista
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }

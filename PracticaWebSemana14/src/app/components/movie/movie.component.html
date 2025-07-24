@@ -1,0 +1,24 @@
+<div class="movie-card">
+  <div class="movie-poster">
+    <img [src]="movie().poster" [alt]="movie().title" (error)="onImageError($event)" />
+    <div class="movie-rating">
+      <span>⭐ {{ movie().rating }}</span>
+    </div>
+  </div>
+  
+  <div class="movie-content">
+    <h3 class="movie-title">{{ movie().title }}</h3>
+    <div class="movie-info">
+      <span class="year">{{ movie().year }}</span>
+      <span class="duration">{{ formatDuration(movie().duration) }}</span>
+      <span class="genre">{{ movie().genre }}</span>
+    </div>
+    <p class="movie-director"><strong>Director:</strong> {{ movie().director }}</p>
+    <p class="movie-plot">{{ movie().plot }}</p>
+    
+    <div class="movie-actions">
+      <button class="btn-primary" (click)="onViewDetails()">Ver Detalles</button>
+      <button class="btn-secondary" (click)="onAddToWatchlist()">Agregar a Lista</button>
+    </div>
+  </div>
+</div>

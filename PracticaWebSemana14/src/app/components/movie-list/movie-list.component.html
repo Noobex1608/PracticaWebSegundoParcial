@@ -1,0 +1,92 @@
+<div class="movie-list-container">
+  <header class="header">
+    <h1>🎬 Cartelera de Cine</h1>
+    <p>Descubre las mejores películas</p>
+  </header>
+
+  <div class="filters-section">
+    <div class="search-bar">
+      <input 
+        type="text" 
+        placeholder="Buscar películas, directores..." 
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+        class="search-input">
+    </div>
+    
+    <div class="filters">
+      <select (change)="onGenreChange($event)" [value]="selectedGenre()" class="filter-select">
+        <option value="all">Todos los géneros</option>
+        @for (genre of genres(); track genre) {
+          <option [value]="genre">{{ genre }}</option>
+        }
+      </select>
+      
+      <select (change)="onFilterChange($event)" [value]="selectedFilter()" class="filter-select">
+        <option value="all">Todas las películas</option>
+        <option value="top-rated">Mejor valoradas</option>
+        <option value="recent">Recientes (2010+)</option>
+        <option value="classic">Clásicas (antes 2000)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="movies-grid">
+    @for (movie of filteredMovies(); track movie.id) {
+      <app-movie 
+        [movie]="movie"
+        (viewDetails)="onViewDetails($event)"
+        (addToWatchlist)="onAddToWatchlist($event)">
+      </app-movie>
+    } @empty {
+      <div class="no-movies">
+        <h3>No se encontraron películas</h3>
+        <p>Intenta cambiar los filtros de búsqueda</p>
+      </div>
+    }
+  </div>
+
+  <!-- Modal para detalles de película -->
+  @if (selectedMovie()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="closeModal()">×</button>
+        
+        <div class="modal-movie-details">
+          <div class="modal-poster">
+            <img [src]="selectedMovie()!.poster" [alt]="selectedMovie()!.title" (error)="onImageError($event)">
+          </div>
+          
+          <div class="modal-info">
+            <h2>{{ selectedMovie()!.title }}</h2>
+            <div class="movie-meta">
+              <span class="rating">⭐ {{ selectedMovie()!.rating }}</span>
+              <span class="year">{{ selectedMovie()!.year }}</span>
+              <span class="duration">{{ formatDuration(selectedMovie()!.duration) }}</span>
+            </div>
+            
+            <div class="movie-details">
+              <p><strong>Director:</strong> {{ selectedMovie()!.director }}</p>
+              <p><strong>Género:</strong> {{ selectedMovie()!.genre }}</p>
+              <p><strong>Fecha de estreno:</strong> {{ selectedMovie()!.releaseDate }}</p>
+            </div>
+            
+            <div class="plot">
+              <h3>Sinopsis</h3>
+              <p>{{ selectedMovie()!.plot }}</p>
+            </div>
+            
+            <div class="modal-actions">
+              <button class="btn-primary" (click)="onAddToWatchlist(selectedMovie()!)">
+                Agregar a mi lista
+              </button>
+              <button class="btn-secondary" (click)="closeModal()">
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

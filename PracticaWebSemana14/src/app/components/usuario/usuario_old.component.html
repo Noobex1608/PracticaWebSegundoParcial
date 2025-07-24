@@ -1,0 +1,139 @@
+<div class="usuario-container">
+  <!-- Header con estadísticas -->
+  <div class="header">
+    <h1>👥 Gestión de Usuarios</h1>
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().total }}</span>
+        <span class="stat-label">Total Usuarios</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().usuariosRecientes }}</span>
+        <span class="stat-label">Nuevos (30 días)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ getObjectKeys(stats().dominioStats).length }}</span>
+        <span class="stat-label">Dominios Email</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles -->
+  <div class="controls">
+    <div class="search-section">
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre o email..." 
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+        class="search-input">
+      
+      <button class="btn-clear" (click)="clearSearch()">Limpiar</button>
+    </div>
+    
+    <button class="btn-primary" (click)="openCreateForm()">
+      ➕ Nuevo Usuario
+    </button>
+  </div>
+
+  <!-- Tabla de usuarios -->
+  <div class="usuarios-table-container">
+    <table class="usuarios-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Fecha Registro</th>
+          <th>Tiempo Registrado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (usuario of filteredUsuarios(); track usuario.id) {
+          <tr class="usuario-row">
+            <td>{{ usuario.id }}</td>
+            <td class="nombre-cell">
+              <div class="user-avatar">{{ usuario.nombre.charAt(0).toUpperCase() }}</div>
+              <span>{{ usuario.nombre }}</span>
+            </td>
+            <td class="email-cell">{{ usuario.email }}</td>
+            <td>{{ formatDate(usuario.fechaRegistro) }}</td>
+            <td class="time-cell">{{ getTimeSinceRegistration(usuario.fechaRegistro) }}</td>
+            <td class="actions-cell">
+              <button class="btn-edit" (click)="openEditForm(usuario)">
+                ✏️ Editar
+              </button>
+              <button class="btn-delete" (click)="deleteUsuario(usuario)">
+                🗑️ Eliminar
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="no-results-row">
+            <td colspan="6">
+              <div class="no-results">
+                <h3>No se encontraron usuarios</h3>
+                <p>Intenta cambiar el término de búsqueda o crea un nuevo usuario</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal de formulario -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="closeForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingUsuario() ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
+          <button class="close-btn" (click)="closeForm()">×</button>
+        </div>
+        
+        <form (ngSubmit)="onSubmit()" class="usuario-form">
+          <div class="form-group">
+            <label for="nombre">Nombre Completo:</label>
+            <input 
+              type="text" 
+              id="nombre"
+              [value]="formData().nombre"
+              (input)="updateFormField('nombre', $event.target.value)"
+              placeholder="Ingrese el nombre completo"
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input 
+              type="email" 
+              id="email"
+              [value]="formData().email"
+              (input)="updateFormField('email', $event.target.value)"
+              placeholder="usuario@ejemplo.com"
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="fechaRegistro">Fecha de Registro:</label>
+            <input 
+              type="date" 
+              id="fechaRegistro"
+              [value]="formData().fechaRegistro.toISOString().split('T')[0]"
+              (input)="updateFormField('fechaRegistro', new Date(($event.target as HTMLInputElement).value))"
+              required>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="closeForm()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">
+              {{ editingUsuario() ? 'Actualizar' : 'Crear' }} Usuario
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }

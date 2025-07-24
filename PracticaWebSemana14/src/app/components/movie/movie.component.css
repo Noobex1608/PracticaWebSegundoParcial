@@ -1,0 +1,163 @@
+.movie-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.movie-poster {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+
+.movie-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover .movie-poster img {
+  transform: scale(1.05);
+}
+
+.movie-rating {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.movie-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-title {
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.2;
+}
+
+.movie-info {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.movie-info span {
+  background: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.year {
+  background: #e3f2fd !important;
+  color: #1976d2 !important;
+}
+
+.duration {
+  background: #f3e5f5 !important;
+  color: #7b1fa2 !important;
+}
+
+.genre {
+  background: #e8f5e8 !important;
+  color: #388e3c !important;
+}
+
+.movie-director {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.movie-plot {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666;
+  margin-bottom: 20px;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.movie-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn-secondary:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .movie-actions {
+    flex-direction: column;
+  }
+  
+  .movie-poster {
+    height: 300px;
+  }
+  
+  .movie-title {
+    font-size: 1.3rem;
+  }
+}

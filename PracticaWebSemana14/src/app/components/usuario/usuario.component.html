@@ -1,0 +1,116 @@
+<div class="usuario-container">
+  <!-- Header con estadísticas -->
+  <div class="header">
+    <h1>👥 Gestión de Usuarios</h1>
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().total }}</span>
+        <span class="stat-label">Total Usuarios</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ getObjectKeys(stats().dominioStats).length }}</span>
+        <span class="stat-label">Dominios Email</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats().usuariosRecientes }}</span>
+        <span class="stat-label">Usuarios Activos</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ getObjectKeys(stats().dominioStats).length }}</span>
+        <span class="stat-label">Días Promedio</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles -->
+  <div class="controls">
+    <div class="search-filters">
+      <input
+        type="text"
+        placeholder="Buscar por nombre o email..."
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+        class="search-input">
+      <button class="btn-clear" (click)="clearSearch()">Limpiar</button>
+    </div>
+    <button class="btn-primary" (click)="openCreateForm()">
+      ➕ Nuevo Usuario
+    </button>
+  </div>
+
+  <!-- Lista de usuarios -->
+  <div class="usuarios-grid">
+    @for (usuario of filteredUsuarios(); track usuario.id) {
+      <div class="usuario-card">
+        <div class="usuario-info">
+          <h3>{{ usuario.nombre }}</h3>
+          <p class="email">📧 {{ usuario.email }}</p>
+          <p class="fecha">📅 Registrado: {{ formatDate(usuario.fechaRegistro) }}</p>
+          <span class="status-badge active">✅ Activo</span>
+        </div>
+        <div class="usuario-actions">
+          <button class="btn-edit" (click)="openEditForm(usuario)">✏️ Editar</button>
+          <button class="btn-delete" (click)="deleteUsuario(usuario)">🗑️ Eliminar</button>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <p>👤 No hay usuarios registrados</p>
+      </div>
+    }
+  </div>
+
+  <!-- Formulario Modal -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="closeForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingUsuario() ? '✏️ Editar' : '➕ Nuevo' }} Usuario</h2>
+          <button class="close-btn" (click)="closeForm()">✖️</button>
+        </div>
+        
+        <form (ngSubmit)="onSubmit()" class="usuario-form">
+          <div class="form-row">
+            <label for="nombre">Nombre:</label>
+            <input 
+              type="text" 
+              id="nombre"
+              [value]="formData().nombre"
+              (input)="updateFormField('nombre', $any($event.target).value)"
+              required 
+              placeholder="Ingrese el nombre completo">
+          </div>
+
+          <div class="form-row">
+            <label for="email">Email:</label>
+            <input 
+              type="email" 
+              id="email"
+              [value]="formData().email"
+              (input)="updateFormField('email', $any($event.target).value)"
+              required 
+              placeholder="usuario@ejemplo.com">
+          </div>
+
+          <div class="form-row">
+            <label for="fechaRegistro">Fecha de Registro:</label>
+            <input 
+              type="date" 
+              id="fechaRegistro"
+              [value]="formData().fechaRegistro.toISOString().split('T')[0]"
+              (input)="updateFormField('fechaRegistro', $any($event.target).valueAsDate)"
+              required>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="closeForm()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">
+              {{ editingUsuario() ? 'Actualizar' : 'Crear' }} Usuario
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
